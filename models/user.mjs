@@ -8,5 +8,4 @@ const userSchema = Schema({
 
 userSchema.plugin(uniqueValidator);
 
-//WHAT
 export const User = model("User", userSchema);

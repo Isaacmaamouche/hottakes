@@ -2,8 +2,8 @@ import { User } from "../models/user.mjs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const createAccount = (req, res, next) => {
-  console.debug("account creation started");
+export const createAccount = (req, res) => {
+  console.log("account creation for req.body.email");
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
@@ -19,23 +19,34 @@ export const createAccount = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-export const login = (req, res, next) => {
+export const login = (req, res) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({ message: "User not find" });
+        console.log("User not found");
+        return res.status(401).json({ message: "User not found" });
       }
+      console.log("User found : ", user._id);
+
       bcrypt
         .compare(req.body.password, user.password)
-        .then((valid) => {
-          if (!valid) {
+        .then((match) => {
+          if (!match) {
+            console.log("bad password");
             return res.status(401).json({ message: "bad password" });
           }
+          console.log("password match");
+          const signedToken = jwt.sign(
+            { userId: user._id },
+            process.env.HOTTAKES_SECRET_TOKEN,
+            {
+              expiresIn: "24h",
+            }
+          );
+          console.log(signedToken);
           res.status(200).json({
             userId: user._id,
-            token: jwt.sign({ userId: user._id }, "HOTTAKES_SECRET_TOKEN", {
-              expiresIn: "24h",
-            }),
+            token: signedToken,
           });
         })
         .catch((error) => res.status(500).json({ error }));

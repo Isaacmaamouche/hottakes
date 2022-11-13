@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { helloRouter } from "./routes/hello.mjs";
 import { userRouter } from "./routes/user.mjs";
+import { isConnected } from "./middleware/isConnected.mjs";
 
 export const app = express();
 
@@ -24,4 +25,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/", helloRouter);
+app.use("/isconnected", isConnected, (req, res) => {
+  console.debug("user is connected");
+  res.status(201).json({ message: "user is connected" });
+});
 app.use("/api/auth", userRouter);
