@@ -43,7 +43,6 @@ export const login = (req, res) => {
               expiresIn: "24h",
             }
           );
-          console.log(signedToken);
           res.status(200).json({
             userId: user._id,
             token: signedToken,

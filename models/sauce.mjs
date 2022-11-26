@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const thingSchema = Schema({
+const sauceSchema = Schema({
   userId: { type: String, required: true },
   name: { type: String, required: true },
   manufacturer: { type: String, required: true },
@@ -14,4 +14,4 @@ const thingSchema = Schema({
   usersDisliked: { type: [String], required: true },
 });
 
-module.exports = model("Thing", thingSchema);
+export const Sauce = model("Sauce", sauceSchema);
