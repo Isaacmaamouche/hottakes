@@ -4,13 +4,13 @@ import * as fs from "node:fs";
 export const getSauce = (req, res) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
-    .catch((error) => res.status(400).json({ error }));
+    .catch((err) => res.status(400).json({ err }));
 };
 
 export const getAllSauces = (req, res) => {
   Sauce.find()
     .then((sauces) => res.status(200).json(sauces))
-    .catch((error) => res.status(400).json({ error }));
+    .catch((err) => res.status(400).json({ err }));
 };
 
 export const createSauce = (req, res) => {
@@ -44,15 +44,15 @@ export const createSauce = (req, res) => {
       console.debug("save order sent");
       return res.status(201).json({ message: "sauce créé" });
     })
-    .catch((error) => {
+    .catch((err) => {
       console.debug("save failed");
-      return res.status(400).json({ error });
+      return res.status(400).json({ err });
     });
 };
 
 export const updateSauce = (req, res) => {
   const updateImage = Boolean(req.file);
-  const newSauce = updateImage ? JSON.parse(req.body.sauce) : req.body;
+  const updatedSauce = updateImage ? JSON.parse(req.body.sauce) : req.body;
 
   if (updateImage) {
     const filePath = `http://localhost:3000/images/${req.file.filename}`;
@@ -67,38 +67,22 @@ export const updateSauce = (req, res) => {
     Sauce.updateOne(
       { _id: req.params.id },
       {
-        ...newSauce,
+        ...updatedSauce,
         imageUrl: filePath,
       }
     )
-      .then(() => res.status(200).json({ message: "object modifié" }))
-      .catch((error) => res.status(400).json({ error }));
+      .then(() => res.status(200).json({ message: "sauce modifiée" }))
+      .catch((err) => res.status(400).json({ err }));
   } else {
-    Sauce.updateOne({ _id: req.params.id }, { ...newSauce })
-      .then(() => res.status(200).json({ message: "object modifié" }))
-      .catch((error) => res.status(400).json({ error }));
+    Sauce.updateOne({ _id: req.params.id }, { ...updatedSauce })
+      .then(() => res.status(200).json({ message: "sauce modifiée" }))
+      .catch((err) => res.status(400).json({ err }));
   }
 };
 
 export const deleteSauce = (req, res) => {
-  //TODO
-  console.log("deleteSauce controller ", req.auth, req.params.id);
-  //   Sauce.findOne({ _id: req.params.id }).then((sauce) => {
-  //     const filename = sauce.imageUrl?.split("/images/")[1];
-  //     filename &&
-  //       fs.unlink(
-  //         `./public/src/images/${filename}`,
-  //         (err) => err && console.debug(err)
-  //       );
-  //   });
-
-  //WHAT Comment supprimer l'image puis le doc, ou l'inverse, en gérant le cas où l'un des deux planterait
-  //   Sauce.deleteOne({ _id: req.params.id })
-  //     .then(() => res.status(200).json({ message: "object supprimé" }))
-  //     .catch((error) => res.status(400).json({ error }));
-
-  Sauce.findOneAndDelete({ _id: req.params.id }, (error, sauce) => {
-    error && res.status(400).json({ error });
+  Sauce.findOneAndDelete({ _id: req.params.id }, (err, sauce) => {
+    if (err) res.status(400).json({ err });
     const filename = sauce.imageUrl.split("/images/")[1];
     fs.unlink(
       `./public/src/images/${filename}`,
@@ -110,5 +94,39 @@ export const deleteSauce = (req, res) => {
 
 export const likeSauce = (req, res) => {
   //TODO
-  console.log("likeSauce controller");
+  console.log("likeSauce controller, ", req.auth.userId, req.body);
+  const { like } = req.body;
+
+  Sauce.findOne({ _id: req.params.id })
+    .then((sauce) => {
+      let usersLiked = sauce.usersLiked;
+      let usersDisliked = sauce.usersDisliked;
+      if (like == 1) {
+        usersLiked = [...sauce.usersLiked, req.auth.userId];
+      }
+      if (like == 0) {
+        usersLiked = sauce.usersLiked.filter(
+          (userId) => userId === req.auth.userId
+        );
+        usersDisliked = sauce.usersDisliked.filter(
+          (userId) => userId === req.auth.userId
+        );
+      }
+      if (like == -1) {
+        usersDisliked = [...sauce.usersDisliked, req.auth.userId];
+      }
+
+      Sauce.updateOne(
+        { _id: req.params.id },
+        {
+          usersLiked,
+          likes: usersLiked.length,
+          usersDisliked,
+          dislikes: usersDisliked.length,
+        }
+      )
+        .then(() => res.status(200).json({ message: "sauce modifiée" }))
+        .catch((err) => res.status(400).json({ err }));
+    })
+    .catch((err) => res.status(400).json({ err }));
 };
