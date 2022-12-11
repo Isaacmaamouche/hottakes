@@ -17,12 +17,15 @@ const normalizePort = (val) => {
   }
   return false;
 };
+
 const port = normalizePort(process.env.PORT || "3000");
 
 app.set("port", port);
+
 const server = http.createServer(app);
 
 const address = server.address();
+
 const bind =
   typeof address === "string"
     ? "pipe " + address
@@ -47,11 +50,12 @@ const errorHandler = (error) => {
 };
 
 server.on("error", errorHandler);
+
 server.on("listening", () => {
-  console.log("Listening on " + bind);
+  console.debug("Listening on " + bind);
 });
 
-//Connects to mongoDB
+//Connection to mongoDB
 connectDB();
 
 //Wait for the 'open' event to listen for request

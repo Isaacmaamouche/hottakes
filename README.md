@@ -1,4 +1,4 @@
-# HOT TAKES
+## HOT TAKES
 
 Backend server for Project 6 of OpenClassrooms' Web Developer path.
 

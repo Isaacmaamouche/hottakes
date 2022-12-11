@@ -6,6 +6,8 @@ export const connectDB = () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
-    .then(() => console.log("Connexion à MongoDB réussie !"))
-    .catch((error) => console.log("Connexion à MongoDB échouée : ", error));
+    .then(() => console.debug("Connection to MongoDB successful!"))
+    .catch((error) =>
+      console.debug("Connection to MongoDB has failed: ", error)
+    );
 };

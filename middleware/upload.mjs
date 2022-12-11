@@ -1,5 +1,6 @@
 import multer from "multer";
 
+//Defines the folder destination and the filename
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./public/src/images");
@@ -9,6 +10,7 @@ const storage = multer.diskStorage({
   },
 });
 
+//Defines the accepted format
 const fileFilter = (req, file, cb) => {
   if (
     file.mimetype.includes("jpeg") ||

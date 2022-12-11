@@ -6,6 +6,9 @@
     },
     "extends": "eslint:recommended",
     "overrides": [
+        {
+      "files": ["**/*.{ts,tsx,js,jsx}"]
+    }
     ],
     "parserOptions": {
         "ecmaVersion": "latest",

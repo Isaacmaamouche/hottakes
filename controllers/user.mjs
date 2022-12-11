@@ -3,10 +3,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const createAccount = (req, res) => {
-  console.log("account creation for req.body.email");
+  //Encrypt the input password
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
+      //Save the user following the specified schema
       const user = new User({
         email: req.body.email,
         password: hash,
@@ -20,22 +21,22 @@ export const createAccount = (req, res) => {
 };
 
 export const login = (req, res) => {
+  //Look for a user with a matching email
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        console.log("User not found");
+        //Returns null if user not found, respond with an error
         return res.status(401).json({ message: "User not found" });
       }
-      console.log("User found : ", user._id);
-
+      //Check if the encrypted password matches the input password
       bcrypt
         .compare(req.body.password, user.password)
         .then((match) => {
           if (!match) {
-            console.log("bad password");
+            //Returns an error if the password is wrong
             return res.status(401).json({ message: "bad password" });
           }
-          console.log("password match");
+          //Returns a signed token if the password matches
           const signedToken = jwt.sign(
             { userId: user._id },
             process.env.HOTTAKES_SECRET_TOKEN,
