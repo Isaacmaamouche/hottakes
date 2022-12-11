@@ -109,7 +109,7 @@ export const likeSauce = (req, res) => {
       //If it's a like
       if (like == 1) {
         //Add the user to the array of users who's liked this sauce
-        usersLiked = [...sauce.usersLiked, req.auth.userId];
+        usersLiked = [...new Set([...sauce.usersLiked, req.auth.userId])];
       }
       //If it's an unlike or an undisliked
       if (like == 0) {
@@ -124,7 +124,7 @@ export const likeSauce = (req, res) => {
       //If it's a dislike
       if (like == -1) {
         //Add the user to the array of users who's disliked this sauce
-        usersDisliked = [...sauce.usersDisliked, req.auth.userId];
+        usersDisliked = [...new Set([...sauce.usersDisliked, req.auth.userId])];
       }
 
       //Update the sauce with the new likes/dislikes informations
