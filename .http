@@ -1,0 +1,63 @@
+//Signup attempt with missing info
+POST http://localhost:3000/api/auth/signup
+content-type: application/json
+
+{
+    "email": "test2@test.com"
+}
+
+###
+
+//Login attempt with wrong password
+POST http://localhost:3000/api/auth/login
+content-type: application/json
+
+{
+    "email": "test@test.com",
+    "password": "bad_password"
+}
+
+###
+//Login attempt with non registered email
+POST http://localhost:3000/api/auth/login
+content-type: application/json
+
+{
+    "email": "test2@test.com",
+    "password": "password"
+}
+
+
+###
+
+//GET ALL SAUCES WITHOUT CREDENTIALS
+http://localhost:3000/api/sauces
+content-type: application/json
+
+###
+
+//Get all sauce as a conencted user
+http://localhost:3000/api/sauces
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzcwYzU1ODI0OGE0ZTQ4ZWNhNjRjNzUiLCJpYXQiOjE2NzI0MTYxOTksImV4cCI6MTY3MjUwMjU5OX0.p59Gq6qvYmh69_OkRyahUL8iqCs7RL9myeUQBc-giT0
+
+###
+
+//Get a sauce
+http://localhost:3000/api/sauces/6370d713a82ac1bc3874ef8a
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzcwYzU1ODI0OGE0ZTQ4ZWNhNjRjNzUiLCJpYXQiOjE2NzI0MTYxOTksImV4cCI6MTY3MjUwMjU5OX0.p59Gq6qvYmh69_OkRyahUL8iqCs7RL9myeUQBc-giT0
+
+###
+
+//Get a sauce that doesn't exist
+http://localhost:3000/api/sauces/00000
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzcwYzU1ODI0OGE0ZTQ4ZWNhNjRjNzUiLCJpYXQiOjE2NzI0MTYxOTksImV4cCI6MTY3MjUwMjU5OX0.p59Gq6qvYmh69_OkRyahUL8iqCs7RL9myeUQBc-giT0
+
+###
+
+//Delete a sauce you don't own
+DELETE http://localhost:3000/api/sauces/6370d713a82ac1bc3874ef8a
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2FmMTMwYTI4N2M5ZWU1OGM1Njk4NzMiLCJpYXQiOjE2NzI0MTgwNTgsImV4cCI6MTY3MjUwNDQ1OH0.ow7_Sb4zK7eKDeUYFMQ_GJaP8K_Sp1FqUYpXlC1G9xM
