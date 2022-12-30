@@ -19,4 +19,3 @@ app.use(express.json());
 //App's routes
 app.use("/api/auth", userRouter);
 app.use("/api/sauces", sauceRouter);
-//WHAT User non connecté voit les sauces ?

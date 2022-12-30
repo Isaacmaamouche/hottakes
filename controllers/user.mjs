@@ -14,10 +14,12 @@ export const createAccount = (req, res) => {
       });
       user
         .save()
-        .then(() => res.status(201).json({ message: "user créé" }))
+        .then(() => res.status(201).json({ message: "User created" }))
         .catch((error) => res.status(400).json({ error }));
     })
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) =>
+      res.status(500).json({ message: "User not created", error })
+    );
 };
 
 export const login = (req, res) => {
@@ -26,7 +28,7 @@ export const login = (req, res) => {
     .then((user) => {
       if (!user) {
         //Returns null if user not found, respond with an error
-        return res.status(401).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found" });
       }
       //Check if the encrypted password matches the input password
       bcrypt
@@ -34,7 +36,7 @@ export const login = (req, res) => {
         .then((match) => {
           if (!match) {
             //Returns an error if the password is wrong
-            return res.status(401).json({ message: "bad password" });
+            return res.status(403).json({ message: "bad password" });
           }
           //Returns a signed token if the password matches
           const signedToken = jwt.sign(

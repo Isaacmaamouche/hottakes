@@ -7,20 +7,20 @@ import {
   likeSauce,
   updateSauce,
 } from "../controllers/sauce.mjs";
-import { isConnected } from "../middleware/isConnected.mjs";
+import { auth } from "../middleware/auth.mjs";
 import { isOwner } from "../middleware/isOwner.mjs";
 import { saveImage } from "../middleware/upload.mjs";
 
 const router = Router();
 
-router.get("/", isConnected, getAllSauces);
-router.get("/:id", isConnected, getSauce);
+router.get("/", auth, getAllSauces);
+router.get("/:id", auth, getSauce);
 
-router.post("/", isConnected, saveImage, createSauce);
-router.post("/:id/like", isConnected, likeSauce);
+router.post("/", auth, saveImage, createSauce);
+router.post("/:id/like", auth, likeSauce);
 
-router.put("/:id", isConnected, isOwner, saveImage, updateSauce);
+router.put("/:id", auth, isOwner, saveImage, updateSauce);
 
-router.delete("/:id", isConnected, isOwner, deleteSauce);
+router.delete("/:id", auth, isOwner, deleteSauce);
 
 export { router as sauceRouter };

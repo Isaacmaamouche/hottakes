@@ -1,14 +1,18 @@
 import { Sauce } from "../models/sauce.mjs";
 import * as fs from "node:fs";
 
-//Retrieves the sauce the given ID parameter
+//Retrieve the sauce the given ID parameter
 export const getSauce = (req, res) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
-    .catch((err) => res.status(400).json({ err }));
+    .catch((err) =>
+      res.status(404).json({
+        error: `The sauce you've requested has not been found, or the provided id is incorrect - ${err}`,
+      })
+    );
 };
 
-//Retrieves all sauces
+//Retrieve all sauces
 export const getAllSauces = (req, res) => {
   Sauce.find()
     .then((sauces) => res.status(200).json(sauces))
@@ -17,12 +21,10 @@ export const getAllSauces = (req, res) => {
 
 //Create a sauce using the data from the request body, with the Sauce schema
 export const createSauce = (req, res) => {
-  console.log("createSauce controller");
-  //WHAT Quel file path est le mieux
-  // const filePath = req.file.path.replace(/\\/g, "/");
-  // public/src/images/1669481721448--pepe.jpg
-  // const filePath = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-  const filePath = `http://localhost:3000/images/${req.file.filename}`;
+  //Create the url to the image using informations from the request
+  const filePath = `${req.protocol}://${req.get("host")}/images/${
+    req.file.filename
+  }`;
 
   const sauceData = JSON.parse(req.body.sauce);
   const sauce = new Sauce({
@@ -57,7 +59,9 @@ export const updateSauce = (req, res) => {
   const updatedSauce = updateImage ? JSON.parse(req.body.sauce) : req.body;
 
   if (updateImage) {
-    const filePath = `http://localhost:3000/images/${req.file.filename}`;
+    const filePath = `${req.protocol}://${req.get("host")}/images/${
+      req.file.filename
+    }`;
     Sauce.findOne({ _id: req.params.id }).then((sauce) => {
       //Delete the no longuer used image
       deleteSauce(sauce);
@@ -144,13 +148,14 @@ export const likeSauce = (req, res) => {
 };
 
 const deleteImage = (sauce) => {
-  //Retrievse the image's name
+  //Retrievse the image's filename
   const filename = sauce.imageUrl?.split("/images/")[1];
   //If there is an image, remove the image from the image folder
-  //Else, do nothing
   filename &&
-    fs.unlink(
-      `./public/src/images/${filename}`,
-      (err) => err && console.debug(err)
-    );
+    fs.unlink(`./public/src/images/${filename}`, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+  //Else, do nothing
 };
